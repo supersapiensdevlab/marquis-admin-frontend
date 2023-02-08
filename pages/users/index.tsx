@@ -5,7 +5,7 @@ import { useDatabase } from "@/lib/DatabaseContext";
 import { useEffect, useState } from "react";
 import axios,{AxiosError} from "axios"
 
-function index() {
+function Index() {
   const { state, setState } = useDatabase();
   const fetchUsers = async () => {
     const data = await axios.get(
@@ -33,4 +33,4 @@ function index() {
   );
 }
 
-export default index;
+export default Index;

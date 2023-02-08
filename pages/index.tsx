@@ -17,7 +17,7 @@ export default function Home() {
       </Head>
       <Navbar title={"Home"} />
       <div className="px-8 py-6">
-        <Table />
+        {/* <Table /> */}
       </div>
     </>
   );
