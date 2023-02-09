@@ -30,13 +30,19 @@ function Navbar({ title }: { title: string }) {
               <Link href="/home">Home</Link>
             </li>
             <li>
-              <Link href="/society">Society</Link>
+              <Link href="/societies">Society</Link>
             </li>
             <li>
               <Link href="/users">Users</Link>
             </li>{" "}
             <li>
               <Link href="/activities">Activity</Link>
+            </li>
+            <li>
+              <Link href="/helpdesk">Helpdesk</Link>
+            </li>
+            <li>
+              <Link href="/discussions">Discussion</Link>
             </li>
           </ul>
         </div>

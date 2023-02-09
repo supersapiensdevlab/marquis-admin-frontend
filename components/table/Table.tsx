@@ -115,7 +115,7 @@ function Table({data}:{data:Array<any>}) {
           </tr>
         </thead>
         <tbody>
-          {data.map((value, key)=>{
+          {data && data.map((value, key)=>{
             return(
               <tr key={key}>
             <th>
