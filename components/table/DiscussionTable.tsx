@@ -206,7 +206,7 @@ function DiscussionTable({ data }: { data: Array<any> }) {
               <form method="POST">
                 <div className="flex flex-col space-y-2 justify-center mt-4">
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Description</p>
+                    <p className="w-1/3">Description</p>
                     <input
                       type="textarea"
                       value={formData.description}
@@ -220,7 +220,7 @@ function DiscussionTable({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Title</p>
+                    <p className="w-1/3">Title</p>
                     <input
                       type="textarea"
                       value={formData.title}
@@ -234,7 +234,7 @@ function DiscussionTable({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Author Id</p>
+                    <p className="w-1/3">Author Id</p>
                     <input
                       type="textarea"
                       value={formData.author_id}
@@ -283,7 +283,7 @@ function DiscussionTable({ data }: { data: Array<any> }) {
             <form method="POST">
               <div className="flex flex-col space-y-2 justify-center mt-4">
                 <div className="flex space-x-2">
-                  <p className="w-1/5">Description</p>
+                  <p className="w-1/3">Description</p>
                   <input
                     type="textarea"
                     value={description}
@@ -295,7 +295,7 @@ function DiscussionTable({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/5">Title</p>
+                  <p className="w-1/3">Title</p>
                   <input
                     type="textarea"
                     value={title}
@@ -307,7 +307,7 @@ function DiscussionTable({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/5">Author Id</p>
+                  <p className="w-1/3">Author Id</p>
                   <input
                     type="textarea"
                     value={author_id}

@@ -3,42 +3,40 @@ import placeholder from "../../public/images/person-placeholder.webp";
 import axios, { AxiosError } from "axios";
 import { useDatabase } from "@/lib/DatabaseContext";
 
-function Table({ data }: { data: Array<any> }) {
+function DailyHelpTable({ data }: { data: Array<any> }) {
   const { state, setState } = useDatabase();
   const [formData, setFormData] = useState<any>();
-  const [addNewHelpDesk, setAddNewHelpDesk] = useState<any | null>({
-    description: "",
+  const [addNewDailyHelp, setAddNewDailyHelp] = useState<any | null>({
+    name: "",
     image: "",
-    author_id: "",
-    category: "",
-    priority: "",
-    status: "",
+    hours: "",
+    contact: "",
     type: "",
+    author_id: "",
   });
-  const { description, image, author_id, category, priority, status, type } =
-    addNewHelpDesk;
-  const fetchHelpDeskQueries = async () => {
+  const { name, image, hours, contact, type, author_id } = addNewDailyHelp;
+  const fetchDailyHelps = async () => {
     const data = await axios.get(
-      "https://marquis-backend.onrender.com/helpdesk/getAllHelpDeskQueries"
+      "https://marquis-backend.onrender.com/dailyhelp/getAllDailyHelps"
     );
     return data.data;
   };
-  const handleQueryDelete = async (helpdesk_id: string) => {
-    if (helpdesk_id) {
+  const handleDailyHelpDelete = async (dailyhelp_id: string) => {
+    if (dailyhelp_id) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/deleteHelpDeskQuery",
+          "https://marquis-backend.onrender.com/dailyhelp/deleteDailyHelp",
           {
-            helpdesk_id,
+            dailyhelp_id,
           }
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchDailyHelps()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                dailyhelp: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -46,25 +44,25 @@ function Table({ data }: { data: Array<any> }) {
     }
   };
 
-  console.log(addNewHelpDesk);
+  console.log(formData);
 
-  const handleQueryUpdateModal = async (value: any) => {
+  const handleDailyHelpUpdateModal = async (value: any) => {
     setFormData(value);
   };
-  const handleUpdateQuery = async () => {
+  const handleUpdateDailyHelp = async () => {
     if (formData) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/updateHelpDeskQuery",
+          "https://marquis-backend.onrender.com/dailyhelp/updateDailyHelp",
           formData
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchDailyHelps()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                dailyhelp: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -74,7 +72,7 @@ function Table({ data }: { data: Array<any> }) {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setAddNewHelpDesk((prev: any) => {
+    setAddNewDailyHelp((prev: any) => {
       return {
         ...prev,
         [name]: value,
@@ -82,21 +80,21 @@ function Table({ data }: { data: Array<any> }) {
     });
   };
 
-  const handleAddNewActivity = async () => {
-    console.log(addNewHelpDesk);
-    if (addNewHelpDesk) {
+  const handleAddNewDailyHelp = async () => {
+    console.log(addNewDailyHelp);
+    if (addNewDailyHelp) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/addHelpDeskQuery",
-          addNewHelpDesk
+          "https://marquis-backend.onrender.com/dailyhelp/addDailyHelp",
+          addNewDailyHelp
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchDailyHelps()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                dailyhelp: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -107,8 +105,8 @@ function Table({ data }: { data: Array<any> }) {
   return (
     <div className="overflow-x-auto w-full ">
       <div className="flex w-full mb-4 justify-end">
-        <label htmlFor="addhelpdesk-modal" className="btn btn-primary">
-          Add Query
+        <label htmlFor="adddailyhelp-modal" className="btn btn-primary">
+          Add DailyHelp
         </label>
       </div>
       <table className="table w-full">
@@ -119,10 +117,10 @@ function Table({ data }: { data: Array<any> }) {
                 <input type="checkbox" className="checkbox" />
               </label>
             </th>
-            <th>Query Id</th>
+            <th>DailyHelp Id</th>
+            <th>Name</th>
+            <th>Contact</th>
             <th>Author Id</th>
-            <th>Type</th>
-            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -147,25 +145,25 @@ function Table({ data }: { data: Array<any> }) {
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{value.helpdesk_id}</div>
+                        <div className="font-bold">{value.dailyhelp_id}</div>
                         {/* <div className="text-sm opacity-50">United States</div> */}
                       </div>
                     </div>
                   </td>
                   <td>
-                    {value.author_id}
+                    {value.name}
                     <br />
                     <span className="badge badge-ghost badge-sm">
                       Desktop Support Technician
                     </span>
                   </td>
-                  <td>{value.type}</td>
-                  <td>{value.status}</td>
+                  <td>{value.contact}</td>
+                  <td>{value.author_id}</td>
                   <td className="flex space-x-1">
                     <button
                       className="btn btn-error btn-xs"
                       onClick={() => {
-                        handleQueryDelete(value.helpdesk_id);
+                        handleDailyHelpDelete(value.dailyhelp_id);
                       }}
                     >
                       Delete
@@ -174,7 +172,7 @@ function Table({ data }: { data: Array<any> }) {
                       htmlFor="edit-modal"
                       className="btn btn-info btn-xs"
                       onClick={() => {
-                        handleQueryUpdateModal(value);
+                        handleDailyHelpUpdateModal(value);
                       }}
                     >
                       Edit
@@ -204,62 +202,48 @@ function Table({ data }: { data: Array<any> }) {
             >
               ✕
             </label>
-            <h3 className="font-bold text-lg">Update Query</h3>
+            <h3 className="font-bold text-lg">Update DailyHelp</h3>
             <hr className="my-2" />
             {formData ? (
               <form method="POST">
                 <div className="flex flex-col space-y-2 justify-center mt-4">
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Description</p>
+                    <p className="w-1/3">Name</p>
                     <input
                       type="textarea"
-                      value={formData.description}
+                      value={formData.name}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          description: e.target.value,
+                          name: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Author Id</p>
+                    <p className="w-1/3">Hours</p>
                     <input
                       type="textarea"
-                      value={formData.author_id}
+                      value={formData.hours}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          author_id: e.target.value,
+                          hours: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Category</p>
+                    <p className="w-1/3">Contact</p>
                     <input
                       type="textarea"
-                      value={formData.category}
+                      value={formData.contact}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          category: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Status</p>
-                    <input
-                      type="textarea"
-                      value={formData.status}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          status: e.target.value,
+                          contact: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
@@ -280,14 +264,14 @@ function Table({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Priority</p>
+                    <p className="w-1/3">Author Id</p>
                     <input
                       type="textarea"
-                      value={formData.priority}
+                      value={formData.author_id}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          priority: e.target.value,
+                          author_id: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
@@ -296,7 +280,7 @@ function Table({ data }: { data: Array<any> }) {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleUpdateQuery();
+                      handleUpdateDailyHelp();
                     }}
                     className="btn btn-primary"
                   >
@@ -313,27 +297,27 @@ function Table({ data }: { data: Array<any> }) {
       <div>
         <input
           type="checkbox"
-          id="addhelpdesk-modal"
+          id="adddailyhelp-modal"
           className="modal-toggle"
         />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box relative">
             <label
-              htmlFor="addhelpdesk-modal"
+              htmlFor="adddailyhelp-modal"
               className="btn btn-sm btn-circle bg-primary absolute right-6 top-4"
             >
               ✕
             </label>
-            <h3 className="font-bold text-lg">Add New Query</h3>
+            <h3 className="font-bold text-lg">Add New DailyHelp</h3>
             <hr className="my-2" />
             <form method="POST">
               <div className="flex flex-col space-y-2 justify-center mt-4">
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Description</p>
+                  <p className="w-1/3">Name</p>
                   <input
                     type="textarea"
-                    value={description}
-                    name="description"
+                    value={name}
+                    name="name"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -341,11 +325,11 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Author Id</p>
+                  <p className="w-1/3">Hours</p>
                   <input
                     type="textarea"
-                    value={author_id}
-                    name="author_id"
+                    value={hours}
+                    name="hours"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -353,23 +337,11 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Category</p>
+                  <p className="w-1/3">Contact</p>
                   <input
                     type="textarea"
-                    value={category}
-                    name="category"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Status</p>
-                  <input
-                    type="textarea"
-                    value={status}
-                    name="status"
+                    value={contact}
+                    name="contact"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -389,11 +361,11 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Priority</p>
+                  <p className="w-1/3">Author Id</p>
                   <input
                     type="textarea"
-                    value={priority}
-                    name="priority"
+                    value={author_id}
+                    name="author_id"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -403,7 +375,7 @@ function Table({ data }: { data: Array<any> }) {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddNewActivity();
+                    handleAddNewDailyHelp();
                   }}
                   className="btn btn-primary"
                 >
@@ -418,4 +390,4 @@ function Table({ data }: { data: Array<any> }) {
   );
 }
 
-export default Table;
+export default DailyHelpTable;

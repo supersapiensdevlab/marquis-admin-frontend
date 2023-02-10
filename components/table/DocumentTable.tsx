@@ -3,42 +3,34 @@ import placeholder from "../../public/images/person-placeholder.webp";
 import axios, { AxiosError } from "axios";
 import { useDatabase } from "@/lib/DatabaseContext";
 
-function Table({ data }: { data: Array<any> }) {
+function DocumentTable({ data }: { data: Array<any> }) {
   const { state, setState } = useDatabase();
   const [formData, setFormData] = useState<any>();
-  const [addNewHelpDesk, setAddNewHelpDesk] = useState<any | null>({
-    description: "",
-    image: "",
+  const [addNewDocument, setAddNewDocument] = useState<any | null>({
+    title: "",
+    file_link: "",
     author_id: "",
-    category: "",
-    priority: "",
-    status: "",
-    type: "",
   });
-  const { description, image, author_id, category, priority, status, type } =
-    addNewHelpDesk;
-  const fetchHelpDeskQueries = async () => {
+  const { title, file_link, author_id } = addNewDocument;
+  const fetchDocuments = async () => {
     const data = await axios.get(
-      "https://marquis-backend.onrender.com/helpdesk/getAllHelpDeskQueries"
+      "https://marquis-backend.onrender.com/document/getAllDocuments"
     );
     return data.data;
   };
-  const handleQueryDelete = async (helpdesk_id: string) => {
-    if (helpdesk_id) {
+  const handleDocumentDelete = async (document_id: string) => {
+    if (document_id) {
       const data = await axios
-        .post(
-          "https://marquis-backend.onrender.com/helpdesk/deleteHelpDeskQuery",
-          {
-            helpdesk_id,
-          }
-        )
+        .post("https://marquis-backend.onrender.com/document/deleteDocument", {
+          document_id,
+        })
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchDocuments()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                documents: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -46,25 +38,25 @@ function Table({ data }: { data: Array<any> }) {
     }
   };
 
-  console.log(addNewHelpDesk);
+  console.log(formData);
 
-  const handleQueryUpdateModal = async (value: any) => {
+  const handleDocumentUpdateModal = async (value: any) => {
     setFormData(value);
   };
-  const handleUpdateQuery = async () => {
+  const handleUpdateDocument = async () => {
     if (formData) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/updateHelpDeskQuery",
+          "https://marquis-backend.onrender.com/document/updateDocument",
           formData
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchDocuments()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                documents: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -74,7 +66,7 @@ function Table({ data }: { data: Array<any> }) {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setAddNewHelpDesk((prev: any) => {
+    setAddNewDocument((prev: any) => {
       return {
         ...prev,
         [name]: value,
@@ -82,21 +74,21 @@ function Table({ data }: { data: Array<any> }) {
     });
   };
 
-  const handleAddNewActivity = async () => {
-    console.log(addNewHelpDesk);
-    if (addNewHelpDesk) {
+  const handleAddNewDocument = async () => {
+    console.log(addNewDocument);
+    if (addNewDocument) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/addHelpDeskQuery",
-          addNewHelpDesk
+          "https://marquis-backend.onrender.com/document/addDocument",
+          addNewDocument
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchDocuments()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                documents: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -107,8 +99,8 @@ function Table({ data }: { data: Array<any> }) {
   return (
     <div className="overflow-x-auto w-full ">
       <div className="flex w-full mb-4 justify-end">
-        <label htmlFor="addhelpdesk-modal" className="btn btn-primary">
-          Add Query
+        <label htmlFor="adddocument-modal" className="btn btn-primary">
+          Add Document
         </label>
       </div>
       <table className="table w-full">
@@ -119,10 +111,9 @@ function Table({ data }: { data: Array<any> }) {
                 <input type="checkbox" className="checkbox" />
               </label>
             </th>
-            <th>Query Id</th>
+            <th>Document Id</th>
+            <th>Title</th>
             <th>Author Id</th>
-            <th>Type</th>
-            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -147,25 +138,24 @@ function Table({ data }: { data: Array<any> }) {
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{value.helpdesk_id}</div>
+                        <div className="font-bold">{value.document_id}</div>
                         {/* <div className="text-sm opacity-50">United States</div> */}
                       </div>
                     </div>
                   </td>
                   <td>
-                    {value.author_id}
+                    {value.title}
                     <br />
                     <span className="badge badge-ghost badge-sm">
                       Desktop Support Technician
                     </span>
                   </td>
-                  <td>{value.type}</td>
-                  <td>{value.status}</td>
+                  <td>{value.author_id}</td>
                   <td className="flex space-x-1">
                     <button
                       className="btn btn-error btn-xs"
                       onClick={() => {
-                        handleQueryDelete(value.helpdesk_id);
+                        handleDocumentDelete(value.document_id);
                       }}
                     >
                       Delete
@@ -174,7 +164,7 @@ function Table({ data }: { data: Array<any> }) {
                       htmlFor="edit-modal"
                       className="btn btn-info btn-xs"
                       onClick={() => {
-                        handleQueryUpdateModal(value);
+                        handleDocumentUpdateModal(value);
                       }}
                     >
                       Edit
@@ -204,20 +194,34 @@ function Table({ data }: { data: Array<any> }) {
             >
               ✕
             </label>
-            <h3 className="font-bold text-lg">Update Query</h3>
+            <h3 className="font-bold text-lg">Update Document</h3>
             <hr className="my-2" />
             {formData ? (
               <form method="POST">
                 <div className="flex flex-col space-y-2 justify-center mt-4">
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Description</p>
+                    <p className="w-1/3">Title</p>
                     <input
                       type="textarea"
-                      value={formData.description}
+                      value={formData.title}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          description: e.target.value,
+                          title: e.target.value,
+                        }));
+                      }}
+                      className="h-5 w-full border border-black p-4 rounded-sm"
+                    ></input>
+                  </div>
+                  <div className="flex space-x-2">
+                    <p className="w-1/3">File</p>
+                    <input
+                      type="textarea"
+                      value={formData.file_link}
+                      onChange={(e) => {
+                        setFormData((prevState: any) => ({
+                          ...prevState,
+                          file_link: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
@@ -237,66 +241,10 @@ function Table({ data }: { data: Array<any> }) {
                       className="h-5 w-full border border-black p-4 rounded-sm"
                     ></input>
                   </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Category</p>
-                    <input
-                      type="textarea"
-                      value={formData.category}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          category: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Status</p>
-                    <input
-                      type="textarea"
-                      value={formData.status}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          status: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Type</p>
-                    <input
-                      type="textarea"
-                      value={formData.type}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          type: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Priority</p>
-                    <input
-                      type="textarea"
-                      value={formData.priority}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          priority: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleUpdateQuery();
+                      handleUpdateDocument();
                     }}
                     className="btn btn-primary"
                   >
@@ -313,27 +261,39 @@ function Table({ data }: { data: Array<any> }) {
       <div>
         <input
           type="checkbox"
-          id="addhelpdesk-modal"
+          id="adddocument-modal"
           className="modal-toggle"
         />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box relative">
             <label
-              htmlFor="addhelpdesk-modal"
+              htmlFor="adddocument-modal"
               className="btn btn-sm btn-circle bg-primary absolute right-6 top-4"
             >
               ✕
             </label>
-            <h3 className="font-bold text-lg">Add New Query</h3>
+            <h3 className="font-bold text-lg">Add New Document</h3>
             <hr className="my-2" />
             <form method="POST">
               <div className="flex flex-col space-y-2 justify-center mt-4">
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Description</p>
+                  <p className="w-1/3">Title</p>
                   <input
                     type="textarea"
-                    value={description}
-                    name="description"
+                    value={title}
+                    name="title"
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                    className="h-5 w-full border border-black p-4 rounded-sm"
+                  ></input>
+                </div>
+                <div className="flex space-x-2">
+                  <p className="w-1/3">File</p>
+                  <input
+                    type="textarea"
+                    value={file_link}
+                    name="file_link"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -352,58 +312,10 @@ function Table({ data }: { data: Array<any> }) {
                     className="h-5 w-full border border-black p-4 rounded-sm"
                   ></input>
                 </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Category</p>
-                  <input
-                    type="textarea"
-                    value={category}
-                    name="category"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Status</p>
-                  <input
-                    type="textarea"
-                    value={status}
-                    name="status"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Type</p>
-                  <input
-                    type="textarea"
-                    value={type}
-                    name="type"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Priority</p>
-                  <input
-                    type="textarea"
-                    value={priority}
-                    name="priority"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddNewActivity();
+                    handleAddNewDocument();
                   }}
                   className="btn btn-primary"
                 >
@@ -418,4 +330,4 @@ function Table({ data }: { data: Array<any> }) {
   );
 }
 
-export default Table;
+export default DocumentTable;

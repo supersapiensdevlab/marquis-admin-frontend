@@ -30,20 +30,36 @@ function Navbar({ title }: { title: string }) {
               <Link href="/home">Home</Link>
             </li>
             <li>
-              <Link href="/societies">Society</Link>
+              <Link href="/activities">Activity</Link>
             </li>
             <li>
-              <Link href="/users">Users</Link>
-            </li>{" "}
+              <Link href="/amenities">Amenity</Link>
+            </li>
             <li>
-              <Link href="/activities">Activity</Link>
+              <Link href="/dailyhelp">Daily Help</Link>
+            </li>
+            <li>
+              <Link href="/discussions">Discussion</Link>
+            </li>
+            <li>
+              <Link href="/documents">Document</Link>
             </li>
             <li>
               <Link href="/helpdesk">Helpdesk</Link>
             </li>
             <li>
-              <Link href="/discussions">Discussion</Link>
+              <Link href="/invites">Invite</Link>
             </li>
+            <li>
+              <Link href="/notices">Notice</Link>
+            </li>
+            <li>
+              <Link href="/societies">Society</Link>
+            </li>
+            <li>
+              <Link href="/users">Users</Link>
+            </li>
+            <li></li>
           </ul>
         </div>
       </div>

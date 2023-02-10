@@ -3,42 +3,33 @@ import placeholder from "../../public/images/person-placeholder.webp";
 import axios, { AxiosError } from "axios";
 import { useDatabase } from "@/lib/DatabaseContext";
 
-function Table({ data }: { data: Array<any> }) {
+function InviteTable({ data }: { data: Array<any> }) {
   const { state, setState } = useDatabase();
   const [formData, setFormData] = useState<any>();
-  const [addNewHelpDesk, setAddNewHelpDesk] = useState<any | null>({
-    description: "",
-    image: "",
-    author_id: "",
-    category: "",
-    priority: "",
-    status: "",
-    type: "",
+  const [addNewInvite, setAddNewInvite] = useState<any | null>({
+    invitee: "",
+    invitation_date: null,
   });
-  const { description, image, author_id, category, priority, status, type } =
-    addNewHelpDesk;
-  const fetchHelpDeskQueries = async () => {
+  const { invitee, invitation_date } = addNewInvite;
+  const fetchInvites = async () => {
     const data = await axios.get(
-      "https://marquis-backend.onrender.com/helpdesk/getAllHelpDeskQueries"
+      "https://marquis-backend.onrender.com/invite/getAllInvites"
     );
     return data.data;
   };
-  const handleQueryDelete = async (helpdesk_id: string) => {
-    if (helpdesk_id) {
+  const handleInviteDelete = async (invite_id: string) => {
+    if (invite_id) {
       const data = await axios
-        .post(
-          "https://marquis-backend.onrender.com/helpdesk/deleteHelpDeskQuery",
-          {
-            helpdesk_id,
-          }
-        )
+        .post("https://marquis-backend.onrender.com/invite/deleteInvite", {
+          invite_id,
+        })
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchInvites()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                invites: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -46,25 +37,25 @@ function Table({ data }: { data: Array<any> }) {
     }
   };
 
-  console.log(addNewHelpDesk);
+  console.log(formData);
 
-  const handleQueryUpdateModal = async (value: any) => {
+  const handleInviteUpdateModal = async (value: any) => {
     setFormData(value);
   };
-  const handleUpdateQuery = async () => {
+  const handleUpdateInvite = async () => {
     if (formData) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/updateHelpDeskQuery",
+          "https://marquis-backend.onrender.com/invite/updateInvite",
           formData
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchInvites()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                invites: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -74,7 +65,7 @@ function Table({ data }: { data: Array<any> }) {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setAddNewHelpDesk((prev: any) => {
+    setAddNewInvite((prev: any) => {
       return {
         ...prev,
         [name]: value,
@@ -82,21 +73,21 @@ function Table({ data }: { data: Array<any> }) {
     });
   };
 
-  const handleAddNewActivity = async () => {
-    console.log(addNewHelpDesk);
-    if (addNewHelpDesk) {
+  const handleAddNewInvite = async () => {
+    console.log(addNewInvite);
+    if (addNewInvite) {
       const data = await axios
         .post(
-          "https://marquis-backend.onrender.com/helpdesk/addHelpDeskQuery",
-          addNewHelpDesk
+          "https://marquis-backend.onrender.com/invite/addInvite",
+          addNewInvite
         )
         .then((response) => {
           console.log(response);
-          fetchHelpDeskQueries()
+          fetchInvites()
             .then((p) =>
               setState((prevState: any) => ({
                 ...prevState,
-                helpdesk: p.data,
+                invites: p.data,
               }))
             )
             .catch((e: Error | AxiosError) => console.log(e));
@@ -107,8 +98,8 @@ function Table({ data }: { data: Array<any> }) {
   return (
     <div className="overflow-x-auto w-full ">
       <div className="flex w-full mb-4 justify-end">
-        <label htmlFor="addhelpdesk-modal" className="btn btn-primary">
-          Add Query
+        <label htmlFor="addinvite-modal" className="btn btn-primary">
+          Add Invite
         </label>
       </div>
       <table className="table w-full">
@@ -119,10 +110,9 @@ function Table({ data }: { data: Array<any> }) {
                 <input type="checkbox" className="checkbox" />
               </label>
             </th>
-            <th>Query Id</th>
-            <th>Author Id</th>
-            <th>Type</th>
-            <th>Status</th>
+            <th>Invite Id</th>
+            <th>Invitee</th>
+            <th>Invitation Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -147,25 +137,24 @@ function Table({ data }: { data: Array<any> }) {
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{value.helpdesk_id}</div>
+                        <div className="font-bold">{value.invite_id}</div>
                         {/* <div className="text-sm opacity-50">United States</div> */}
                       </div>
                     </div>
                   </td>
                   <td>
-                    {value.author_id}
+                    {value.invitee}
                     <br />
                     <span className="badge badge-ghost badge-sm">
                       Desktop Support Technician
                     </span>
                   </td>
-                  <td>{value.type}</td>
-                  <td>{value.status}</td>
+                  <td>{value.invitation_date}</td>
                   <td className="flex space-x-1">
                     <button
                       className="btn btn-error btn-xs"
                       onClick={() => {
-                        handleQueryDelete(value.helpdesk_id);
+                        handleInviteDelete(value.invite_id);
                       }}
                     >
                       Delete
@@ -174,7 +163,7 @@ function Table({ data }: { data: Array<any> }) {
                       htmlFor="edit-modal"
                       className="btn btn-info btn-xs"
                       onClick={() => {
-                        handleQueryUpdateModal(value);
+                        handleInviteUpdateModal(value);
                       }}
                     >
                       Edit
@@ -204,90 +193,34 @@ function Table({ data }: { data: Array<any> }) {
             >
               ✕
             </label>
-            <h3 className="font-bold text-lg">Update Query</h3>
+            <h3 className="font-bold text-lg">Update Invite</h3>
             <hr className="my-2" />
             {formData ? (
               <form method="POST">
                 <div className="flex flex-col space-y-2 justify-center mt-4">
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Description</p>
+                    <p className="w-1/3">Invitee</p>
                     <input
                       type="textarea"
-                      value={formData.description}
+                      value={formData.invitee}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          description: e.target.value,
+                          invitee: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/3">Author Id</p>
+                    <p className="w-1/3">Invitation date</p>
                     <input
-                      type="textarea"
-                      value={formData.author_id}
+                      type="date"
+                      value={formData.invitation_date}
                       onChange={(e) => {
                         setFormData((prevState: any) => ({
                           ...prevState,
-                          author_id: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Category</p>
-                    <input
-                      type="textarea"
-                      value={formData.category}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          category: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Status</p>
-                    <input
-                      type="textarea"
-                      value={formData.status}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          status: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Type</p>
-                    <input
-                      type="textarea"
-                      value={formData.type}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          type: e.target.value,
-                        }));
-                      }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Priority</p>
-                    <input
-                      type="textarea"
-                      value={formData.priority}
-                      onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
-                          priority: e.target.value,
+                          invitation_date: e.target.value,
                         }));
                       }}
                       className="h-5 w-full border border-black p-4 rounded-sm"
@@ -296,7 +229,7 @@ function Table({ data }: { data: Array<any> }) {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleUpdateQuery();
+                      handleUpdateInvite();
                     }}
                     className="btn btn-primary"
                   >
@@ -311,29 +244,25 @@ function Table({ data }: { data: Array<any> }) {
         </div>
       </div>
       <div>
-        <input
-          type="checkbox"
-          id="addhelpdesk-modal"
-          className="modal-toggle"
-        />
+        <input type="checkbox" id="addinvite-modal" className="modal-toggle" />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box relative">
             <label
-              htmlFor="addhelpdesk-modal"
+              htmlFor="addinvite-modal"
               className="btn btn-sm btn-circle bg-primary absolute right-6 top-4"
             >
               ✕
             </label>
-            <h3 className="font-bold text-lg">Add New Query</h3>
+            <h3 className="font-bold text-lg">Add New Invite</h3>
             <hr className="my-2" />
             <form method="POST">
               <div className="flex flex-col space-y-2 justify-center mt-4">
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Description</p>
+                  <p className="w-1/3">Invitee</p>
                   <input
                     type="textarea"
-                    value={description}
-                    name="description"
+                    value={invitee}
+                    name="invitee"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -341,59 +270,11 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Author Id</p>
+                  <p className="w-1/3">Invitation date</p>
                   <input
-                    type="textarea"
-                    value={author_id}
-                    name="author_id"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Category</p>
-                  <input
-                    type="textarea"
-                    value={category}
-                    name="category"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Status</p>
-                  <input
-                    type="textarea"
-                    value={status}
-                    name="status"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Type</p>
-                  <input
-                    type="textarea"
-                    value={type}
-                    name="type"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="w-1/3">Priority</p>
-                  <input
-                    type="textarea"
-                    value={priority}
-                    name="priority"
+                    type="date"
+                    value={invitation_date}
+                    name="invitation_date"
                     onChange={(e) => {
                       handleChange(e);
                     }}
@@ -403,7 +284,7 @@ function Table({ data }: { data: Array<any> }) {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddNewActivity();
+                    handleAddNewInvite();
                   }}
                   className="btn btn-primary"
                 >
@@ -418,4 +299,4 @@ function Table({ data }: { data: Array<any> }) {
   );
 }
 
-export default Table;
+export default InviteTable;

@@ -15,25 +15,22 @@ function Table({ data }: { data: Array<any> }) {
     emergency_name: "",
     emergency_contact: "",
   });
+  const [addNewWing, setAddNewWing] = useState<any>({
+    wing_name: "",
+    floors: "",
+    flat_count_per_floor: "",
+  });
   const [addNewAmenity, setAddNewAmenity] = useState<String | null>();
   const { member_name, contact, designation } = addCommitteeMember;
   const { emergency_name, emergency_contact } = addEmergencyNumber;
+  const { wing_name, floors, flat_count_per_floor } = addNewWing;
   const [addNewSociety, setAddNewSociety] = useState<any | null>({
     name: "",
     address: "",
     image: "jabsj",
     committee_members: [],
     emergency_numbers: [],
-    wings: [
-      {
-        1: {
-          id: "1kjbew",
-          name: "A",
-          floors: 3,
-          flat_count_per_floor: 5,
-        },
-      },
-    ],
+    wings: [],
     amenities: [],
   });
   const {
@@ -149,6 +146,16 @@ function Table({ data }: { data: Array<any> }) {
     });
   };
 
+  const handleWingsAddChange = (e: any) => {
+    const { name, value } = e.target;
+    setAddNewWing((prev: any) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
   return (
     <div className="overflow-x-auto w-full ">
       <div className="flex w-full mb-4 justify-end">
@@ -215,7 +222,7 @@ function Table({ data }: { data: Array<any> }) {
                     >
                       Delete
                     </button>
-                    <label
+                    {/* <label
                       htmlFor="edit-modal"
                       className="btn btn-info btn-xs"
                       onClick={() => {
@@ -223,7 +230,7 @@ function Table({ data }: { data: Array<any> }) {
                       }}
                     >
                       Edit
-                    </label>
+                    </label> */}
                   </td>
                 </tr>
               );
@@ -255,7 +262,7 @@ function Table({ data }: { data: Array<any> }) {
               <form method="POST">
                 <div className="flex flex-col space-y-2 justify-center mt-4">
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Name</p>
+                    <p className="w-1/3">Name</p>
                     <input
                       type="textarea"
                       value={formData.name}
@@ -269,7 +276,7 @@ function Table({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Address</p>
+                    <p className="w-1/3">Address</p>
                     <input
                       type="textarea"
                       value={formData.address}
@@ -283,7 +290,7 @@ function Table({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Access Details</p>
+                    <p className="w-1/3">Access Details</p>
                     <input
                       type="textarea"
                       value={formData.access_details}
@@ -297,7 +304,7 @@ function Table({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Allowed By</p>
+                    <p className="w-1/3">Allowed By</p>
                     <input
                       type="textarea"
                       value={formData.allowed_by}
@@ -311,7 +318,7 @@ function Table({ data }: { data: Array<any> }) {
                     ></input>
                   </div>
                   <div className="flex space-x-2">
-                    <p className="w-1/5">Visitor Contact</p>
+                    <p className="w-1/3">Visitor Contact</p>
                     <input
                       type="textarea"
                       value={formData.visitor_contact}
@@ -356,7 +363,7 @@ function Table({ data }: { data: Array<any> }) {
             <form method="POST">
               <div className="flex flex-col space-y-2 justify-center mt-4">
                 <div className="flex space-x-2">
-                  <p className="w-1/5">Name</p>
+                  <p className="w-1/3">Name</p>
                   <input
                     type="textarea"
                     value={name}
@@ -368,7 +375,7 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/5">Address</p>
+                  <p className="w-1/3">Address</p>
                   <input
                     type="textarea"
                     value={address}
@@ -380,7 +387,7 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex flex-col space-x-2">
-                  <p className="w-full">Committee Members</p>
+                  <p className="w-full">Committee Members :</p>
                   <div className="flex space-x-1 justify-center items-end">
                     <label>
                       Name
@@ -436,9 +443,19 @@ function Table({ data }: { data: Array<any> }) {
                       Add
                     </button>
                   </div>
+                  {/* {addNewSociety.committee_members.length > 0 &&
+                    addNewSociety.committee_members.map(
+                      (value: any, key: any) => {
+                        return (
+                          <div key={key} className="w-full flex text-lg">
+                            <p>{value[key]?.member_name}</p>
+                          </div>
+                        );
+                      }
+                    )} */}
                 </div>
                 <div className="flex flex-col space-x-2">
-                  <p className="w-full">Emergency Numbers</p>
+                  <p className="w-full">Emergency Numbers :</p>
                   <div className="flex space-x-1 justify-center items-end">
                     <label>
                       Name
@@ -482,8 +499,63 @@ function Table({ data }: { data: Array<any> }) {
                   </div>
                 </div>
                 <div className="flex flex-col space-x-2">
-                  <p className="w-full">Amenities</p>
+                  <p className="w-full">Wings :</p>
                   <div className="flex space-x-1 justify-center items-end">
+                    <label>
+                      Name
+                      <input
+                        type="textarea"
+                        value={wing_name}
+                        name="wing_name"
+                        onChange={(e) => {
+                          handleWingsAddChange(e);
+                        }}
+                        className="h-5 w-full border border-black p-4 rounded-sm"
+                      ></input>
+                    </label>
+                    <label>
+                      Floor count
+                      <input
+                        type="textarea"
+                        value={floors}
+                        name="floors"
+                        onChange={(e) => {
+                          handleWingsAddChange(e);
+                        }}
+                        className="h-5 w-full border border-black p-4 rounded-sm"
+                      ></input>
+                    </label>
+                    <label>
+                      Flat per floor
+                      <input
+                        type="textarea"
+                        value={flat_count_per_floor}
+                        name="flat_count_per_floor"
+                        onChange={(e) => {
+                          handleWingsAddChange(e);
+                        }}
+                        className="h-5 w-full border border-black p-4 rounded-sm"
+                      ></input>
+                    </label>
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        addNewSociety.wings.push(addNewWing);
+                        setAddNewWing({
+                          wing_name: "",
+                          floors: "",
+                          flat_count_per_floor: "",
+                        });
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col space-x-2">
+                  <p className="w-full">Amenities :</p>
+                  <div className="flex space-x-1 items-end">
                     <label>
                       Name
                       <input
