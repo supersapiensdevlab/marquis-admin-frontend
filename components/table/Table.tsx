@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import placeholder from "../../public/images/person-placeholder.webp";
 import axios, { AxiosError } from "axios";
 import { useDatabase } from "@/lib/DatabaseContext";
@@ -6,6 +6,7 @@ import { useDatabase } from "@/lib/DatabaseContext";
 function Table({ data }: { data: Array<any> }) {
   const { state, setState } = useDatabase();
   const [formData, setFormData] = useState<any>();
+  const [societies, setSocieties] = useState<any>();
   const [addNewUser, setAddNewUser] = useState<any | null>({
     name: "",
     email_id: "",
@@ -53,6 +54,17 @@ function Table({ data }: { data: Array<any> }) {
     }
   };
 
+  const fetchSocieties = async () => {
+    const data = await axios.get(
+      "https://marquis-backend.onrender.com/society/getAllSocieties"
+    );
+    setSocieties(data.data.data);
+  };
+
+  useEffect(() => {
+    fetchSocieties();
+  }, []);
+
   console.log(formData);
 
   const handleUserUpdateModal = async (value: any) => {
@@ -85,6 +97,8 @@ function Table({ data }: { data: Array<any> }) {
       };
     });
   };
+
+  console.log(addNewUser);
 
   const handleAddNewUser = async () => {
     console.log(addNewUser);
@@ -296,20 +310,36 @@ function Table({ data }: { data: Array<any> }) {
                       className="h-5 w-full border border-black p-4 rounded-sm"
                     ></input>
                   </div>
-                  <div className="flex space-x-2">
-                    <p className="w-1/3">Society Id</p>
-                    <input
-                      type="textarea"
-                      value={formData.society_id}
+                  {/* <div className="flex space-x-2">
+                    <p className="w-1/3">Society Name</p>
+                    <select
+                      value={
+                        formData?.society_id
+                          ? formData.society_id
+                          : societies && societies[0]?.name
+                      }
+                      className="h-9 px-2 w-full border border-black rounded-sm"
                       onChange={(e) => {
-                        setFormData((prevState: any) => ({
-                          ...prevState,
+                        setFormData((prev: any) => ({
+                          ...prev,
                           society_id: e.target.value,
                         }));
                       }}
-                      className="h-5 w-full border border-black p-4 rounded-sm"
-                    ></input>
-                  </div>
+                    >
+                      {societies &&
+                        societies.map((value: any, key: any) => {
+                          return (
+                            <option
+                              key={key}
+                              value={value.society_id}
+                              className="text-black w-full"
+                            >
+                              {value.name}
+                            </option>
+                          );
+                        })}
+                    </select>
+                  </div> */}
                   <div className="flex space-x-2">
                     <p className="w-1/3">Address</p>
                     <input
@@ -454,16 +484,34 @@ function Table({ data }: { data: Array<any> }) {
                   ></input>
                 </div>
                 <div className="flex space-x-2">
-                  <p className="w-1/3">Society Id</p>
-                  <input
-                    type="textarea"
-                    value={society_id}
-                    name="society_id"
+                  <p className="w-1/3">Society Name</p>
+                  <select
+                    value={
+                      addNewUser?.society_id
+                        ? addNewUser.society_id
+                        : societies && societies[0]?.name
+                    }
+                    className="h-9 px-2 w-full border border-black rounded-sm"
                     onChange={(e) => {
-                      handleChange(e);
+                      setAddNewUser((prev: any) => ({
+                        ...prev,
+                        society_id: e.target.value,
+                      }));
                     }}
-                    className="h-5 w-full border border-black p-4 rounded-sm"
-                  ></input>
+                  >
+                    {societies &&
+                      societies.map((value: any, key: any) => {
+                        return (
+                          <option
+                            key={key}
+                            value={value.society_id}
+                            className="text-black w-full"
+                          >
+                            {value.name}
+                          </option>
+                        );
+                      })}
+                  </select>
                 </div>
                 <button
                   onClick={(e) => {

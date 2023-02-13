@@ -9,8 +9,9 @@ function InviteTable({ data }: { data: Array<any> }) {
   const [addNewInvite, setAddNewInvite] = useState<any | null>({
     invitee: "",
     invitation_date: null,
+    invitation_time: null,
   });
-  const { invitee, invitation_date } = addNewInvite;
+  const { invitee, invitation_date, invitation_time } = addNewInvite;
   const fetchInvites = async () => {
     const data = await axios.get(
       "https://marquis-backend.onrender.com/invite/getAllInvites"
@@ -226,6 +227,20 @@ function InviteTable({ data }: { data: Array<any> }) {
                       className="h-5 w-full border border-black p-4 rounded-sm"
                     ></input>
                   </div>
+                  <div className="flex space-x-2">
+                    <p className="w-1/3">Invitation time</p>
+                    <input
+                      type="time"
+                      value={formData.invitation_time}
+                      onChange={(e) => {
+                        setFormData((prevState: any) => ({
+                          ...prevState,
+                          invitation_time: e.target.value,
+                        }));
+                      }}
+                      className="h-5 w-full border border-black p-4 rounded-sm"
+                    ></input>
+                  </div>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
@@ -275,6 +290,18 @@ function InviteTable({ data }: { data: Array<any> }) {
                     type="date"
                     value={invitation_date}
                     name="invitation_date"
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                    className="h-5 w-full border border-black p-4 rounded-sm"
+                  ></input>
+                </div>
+                <div className="flex space-x-2">
+                  <p className="w-1/3">Invitation time</p>
+                  <input
+                    type="time"
+                    value={invitation_time}
+                    name="invitation_time"
                     onChange={(e) => {
                       handleChange(e);
                     }}

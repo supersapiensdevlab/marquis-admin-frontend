@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import placeholder from "../../public/images/person-placeholder.webp";
 import axios, { AxiosError } from "axios";
 import { useDatabase } from "@/lib/DatabaseContext";
@@ -6,6 +6,7 @@ import { useDatabase } from "@/lib/DatabaseContext";
 function Table({ data }: { data: Array<any> }) {
   const { state, setState } = useDatabase();
   const [formData, setFormData] = useState<any>();
+  const [allAmenities, setAllAmenities] = useState<any>();
   const [addCommitteeMember, setAddCommitteeMember] = useState<any>({
     member_name: "",
     contact: "",
@@ -20,6 +21,7 @@ function Table({ data }: { data: Array<any> }) {
     floors: "",
     flat_count_per_floor: "",
   });
+  const [selectedAmenity, setSelectedAmenity] = useState<String | null>();
   const [addNewAmenity, setAddNewAmenity] = useState<String | null>();
   const { member_name, contact, designation } = addCommitteeMember;
   const { emergency_name, emergency_contact } = addEmergencyNumber;
@@ -48,6 +50,16 @@ function Table({ data }: { data: Array<any> }) {
     );
     return data.data;
   };
+  const fetchAmenities = async () => {
+    const data = await axios.get(
+      "https://marquis-backend.onrender.com/amenity/getAllAmenities"
+    );
+    setAllAmenities(data.data.data);
+  };
+
+  useEffect(() => {
+    fetchAmenities();
+  }, []);
   const handleSocietyDelete = async (society_id: string) => {
     if (society_id) {
       const data = await axios
@@ -55,7 +67,6 @@ function Table({ data }: { data: Array<any> }) {
           society_id,
         })
         .then((response) => {
-          console.log(response);
           fetchSocieties()
             .then((p) =>
               setState((prevState: any) => ({
@@ -79,7 +90,6 @@ function Table({ data }: { data: Array<any> }) {
           formData
         )
         .then((response) => {
-          console.log(response);
           fetchSocieties()
             .then((p) =>
               setState((prevState: any) => ({
@@ -102,10 +112,7 @@ function Table({ data }: { data: Array<any> }) {
     });
   };
 
-  console.log("data", addNewSociety);
-
   const handleAddNewSociety = async () => {
-    console.log(addNewSociety);
     if (addNewSociety) {
       const data = await axios
         .post(
@@ -113,7 +120,6 @@ function Table({ data }: { data: Array<any> }) {
           addNewSociety
         )
         .then((response) => {
-          console.log(response);
           fetchSocieties()
             .then((p) =>
               setState((prevState: any) => ({
@@ -155,6 +161,8 @@ function Table({ data }: { data: Array<any> }) {
       };
     });
   };
+
+  console.log(addNewSociety);
 
   return (
     <div className="overflow-x-auto w-full ">
@@ -553,7 +561,7 @@ function Table({ data }: { data: Array<any> }) {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col space-x-2">
+                {/* <div className="flex flex-col space-x-2">
                   <p className="w-full">Amenities :</p>
                   <div className="flex space-x-1 items-end">
                     <label>
@@ -577,6 +585,38 @@ function Table({ data }: { data: Array<any> }) {
                       Add
                     </button>
                   </div>
+                </div> */}
+                <div className="flex space-x-2">
+                  <p className="w-1/3">Amenities</p>
+                  <select
+                    value={
+                      selectedAmenity
+                        ? selectedAmenity
+                        : allAmenities && allAmenities[0]?.name
+                    }
+                    className="h-9 px-2 w-full border border-black rounded-sm"
+                    onChange={(e) => {
+                      // setAddNewSociety((prev: any) => ({
+                      //   ...prev,
+                      //   society_id: e.target.value,
+                      // }))
+                      setSelectedAmenity(e.target.value);
+                      addNewSociety.amenities.push(e.target.value);
+                    }}
+                  >
+                    {allAmenities &&
+                      allAmenities.map((value: any, key: any) => {
+                        return (
+                          <option
+                            key={key}
+                            value={value.name}
+                            className="text-black w-full"
+                          >
+                            {value.name}
+                          </option>
+                        );
+                      })}
+                  </select>
                 </div>
                 <button
                   onClick={(e) => {
